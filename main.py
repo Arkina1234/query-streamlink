@@ -18,24 +18,24 @@ limiter = Limiter(
 # Reads the URL parameters and redirects to Streamlink.
 def query_handler(args):
     """Checks and tests arguments before serving request"""
-    if not args.get("streaming-ip"):
+    if not args.get("url"):
         return "You didn't give any URL."
 
     # for dacast, be warned we have MULTIPLE parameters. Get it if exists
     if args.get("provider"):
-        valid = validators.url(args.get("streaming-ip"))
-        url = args.get("streaming-ip") + "&provider=" + args.get('provider')
+        valid = validators.url(args.get("url"))
+        url = args.get("url") + "&provider=" + args.get('provider')
         return get_streams(url) if valid else "The URL you've entered is not valid."
     else:
-        valid = validators.url(args.get("streaming-ip"))
-        return get_streams(args.get("streaming-ip")) if valid else "The URL you've entered is not valid."
+        valid = validators.url(args.get("url"))
+        return get_streams(args.get("url")) if valid else "The URL you've entered is not valid."
 
 
 # Presentation page
 @app.route("/", methods=['GET'])
 def index():
     return "This program permits you to get direct access to streams by using Streamlink.\r\nIf you have a link that " \
-           "needs to be treated, from this webpage, add /iptv-query?streaming-ip= *your URL*.\r\nNote that it will " \
+           "needs to be treated, from this webpage, add /stream.m3u8?url= *your URL*.\r\nNote that it will " \
            "work " \
            "only on Streamlink-supported websites.\r\nEnjoy ! LaneSh4d0w. Special thanks to Keystroke for the API " \
            "usage. "
@@ -43,7 +43,7 @@ def index():
 
 # iptv-query route -> gives link to Streamlink, link is analyzed
 # for correct plugin routing, and redirects (or shows) to the stream link.
-@app.route("/iptv-query", methods=['GET'])
+@app.route("/stream.m3u8", methods=['GET'])
 @limiter.limit("20/minute")
 @limiter.limit("1/second")
 def home():
